@@ -3,7 +3,7 @@ const mysql = require("mysql");
 const userRoutes = require("./routes/userRoutes");
 const handyRoutes = require("./routes/handyRoutes");
 
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
 
@@ -22,14 +22,14 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(
-  fileUpload({
-    createParentPath: true,
-    limits: {
-      fileSize: 2 * 1024 * 1024, //2MB upload limit
-    },
-  })
-);
+// app.use(
+//   fileUpload({
+//     createParentPath: true,
+//     limits: {
+//       fileSize: 2 * 1024 * 1024, //2MB upload limit
+//     },
+//   })
+// );
 
 //MYSQL
 const pool = mysql.createPool({
