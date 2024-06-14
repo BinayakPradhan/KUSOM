@@ -13,22 +13,25 @@ const initialState = {
   address: "",
   ward_no: 0,
   city: "",
-  profile_pic: null,
+  profile_pic: "pic",
 };
 export default function Signup() {
   const { storeTokenInLS } = useAuth();
   const navigate = useNavigate();
   const [confirmpassword, setConfirmPassword] = useState("");
   const [user, setUser] = useState(initialState);
+
   const handleInput = (e) => {
     const { name, type, value, files } = e.target;
 
-    if (type === "file") {
-      setUser({
-        ...user,
-        [name]: files[0],
-      });
-    } else if (name === "phone_number" || name === "ward_no") {
+    // if (type === "file") {
+    //   setUser({
+    //     ...user,
+    //     // [name]: files[0].name, // Store file name directly
+    //     [name]
+    //   });
+    // } else
+    if (name === "phone_number" || name === "ward_no") {
       setUser({
         ...user,
         [name]: Number(value),
@@ -40,25 +43,29 @@ export default function Signup() {
       });
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(user);
     if (user.password === confirmpassword) {
       try {
-        const formData = new FormData();
-        formData.append("name", user.name);
-        formData.append("user_name", user.user_name);
-        formData.append("password", user.password);
-        formData.append("email", user.email);
-        formData.append("phone_number", user.phone_number);
-        formData.append("address", user.address);
-        formData.append("ward_no", user.ward_no);
-        formData.append("city", user.city);
-        formData.append("profile_pic", user.profile_pic);
+        //   const formData = new FormData();
+        //   formData.append("name", user.name);
+        //   formData.append("user_name", user.user_name);
+        //   formData.append("password", user.password);
+        //   formData.append("email", user.email);
+        //   formData.append("phone_number", user.phone_number);
+        //   formData.append("address", user.address);
+        //   formData.append("ward_no", user.ward_no);
+        //   formData.append("city", user.city);
+        //   formData.append("profile_pic", user.profile_pic);
 
         const response = await fetch(`http://127.0.0.1:9000/users/register`, {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
         });
 
         if (response.ok) {
@@ -67,10 +74,13 @@ export default function Signup() {
           storeTokenInLS(data.token);
 
           setUser(initialState);
-          alert("Login Successful");
+          alert("Signup Successful");
           navigate("/login");
+        } else {
+          const errorData = await response.json();
+          console.log("Server response:", errorData);
+          alert(`Signup failed: ${response.statusText}`);
         }
-        console.log(response);
       } catch (error) {
         console.error("Error in fetch POST:", error);
       }
@@ -167,7 +177,7 @@ export default function Signup() {
                 id="phone_number"
                 required
                 autoComplete="off"
-                // value={user.phone_number}
+                value={user.phone_number}
                 onChange={handleInput}
               />
             </div>
@@ -201,7 +211,7 @@ export default function Signup() {
                 id="ward_no"
                 required
                 autoComplete="off"
-                // value={user.ward_no}
+                value={user.ward_no}
                 onChange={handleInput}
               />
             </div>
