@@ -8,6 +8,7 @@ import Error from "./pages/Error";
 import Logout from "./pages/Logout";
 
 import Navbar from "./components/Navbar";
+import ChooseLogin from "./pages/ChooseLogin";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/helpersignup" element={<HelperSignup />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/chooselogin" element={<ChooseLogin />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

@@ -22,7 +22,7 @@ export default function Jobs() {
               </tr>
             </thead>
             <tbody>
-              {jobPost.map((order) => (
+              {/* {jobPost.map((order) => (
                 <tr key={order.id}>
                   <td>
                     <Link to={`/order/${order.id}`}>#{order.id}</Link>
@@ -42,7 +42,7 @@ export default function Jobs() {
                   <td>{order.shipment_address}</td>
                   <td>abc</td>
                 </tr>
-              ))}
+              ))} */}
             </tbody>
           </table>
         </div>

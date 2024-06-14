@@ -1,10 +1,10 @@
 import Hero from "../components/Hero";
-import User from "./User";
+import Handyman from "./Handyman";
+
 export default function Home() {
   return (
     <>
-      {/* <Hero /> */}
-      <User />
+      <Handyman />
     </>
   );
 }

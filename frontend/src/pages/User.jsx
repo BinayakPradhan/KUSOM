@@ -1,10 +1,8 @@
-import { FiArrowUp, FiFolder } from "react-icons/fi";
+import { FiFolder } from "react-icons/fi";
 
 import { RiUserLocationLine } from "react-icons/ri";
-import { IoEllipse, IoPlanet, IoArrowUndoSharp } from "react-icons/io5";
-import { BiRefresh } from "react-icons/bi";
-import { BsFileEarmark, BsArrowReturnLeft } from "react-icons/bs";
-import { AiOutlineThunderbolt } from "react-icons/ai";
+import { IoEllipse } from "react-icons/io5";
+
 import { TiTickOutline } from "react-icons/ti";
 import AddTask from "../components/AddTask";
 
