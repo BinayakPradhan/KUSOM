@@ -106,3 +106,61 @@ exports.getUserInfo = (req, res) => {
     }
   });
 };
+
+exports.postTask = (req, res) => {
+  const { user_id, post } = req.body;
+
+  // Validate request body
+  if (!user_id || !post.trim()) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  const pool = req.pool; // Assuming the pool is provided in req
+  const postId = uuidv4();
+  let selected_status = 0;
+
+  const query = `
+    INSERT INTO post (
+      post_id, user_id, post, selected_status
+    ) VALUES (?, ?, ?, ?)
+  `;
+  const values = [postId, user_id, post, selected_status];
+
+  pool.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error posting post:", error);
+      return res.status(500).json({ message: "Error posting post." });
+    } else {
+      return res
+        .status(201)
+        .json({ message: "User Post posted successfully." });
+    }
+  });
+};
+
+exports.getPostData = (req, res) => {
+  const pool = req.pool;
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    // console.log(`connected as id ${connection.threadId}`);
+
+    connection.query("Select * from post", (err, rows) => {
+      connection.release();
+
+      if (!err) {
+        res.status(200).json({
+          status: "success",
+          results: rows.length,
+          data: {
+            rows,
+          },
+          // data,
+        });
+      } else {
+        console.log(err);
+      }
+    });
+  });
+};
