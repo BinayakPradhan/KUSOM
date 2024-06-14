@@ -2,11 +2,8 @@ const express = require("express");
 const mysql = require("mysql");
 const userRoutes = require("./routes/userRoutes");
 const handyRoutes = require("./routes/handyRoutes");
-
 // const fileUpload = require("express-fileupload");
 const cors = require("cors");
-
-
 
 const app = express();
 
@@ -57,7 +54,31 @@ app.use(
   },
   handyRoutes
 );
+app.get("/getPostData", (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res.status(500).json({ message: "Error connecting to database." });
+    }
 
+    connection.query("SELECT * FROM post", (err, rows) => {
+      connection.release();
+
+      if (err) {
+        console.error("Error executing query:", err);
+        return res
+          .status(500)
+          .json({ message: "Error querying database.", error: err });
+      }
+
+      res.status(200).json({
+        status: "success",
+        results: rows.length,
+        data: { rows },
+      });
+    });
+  });
+});
 // app.get("/", (req, res) => {
 //   res.send("Henlo, World!");
 // });

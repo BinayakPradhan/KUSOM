@@ -1,7 +1,22 @@
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
+const comparePassword = require("./../utils/comparePassword");
+const uuid = require("uuid");
+const jwt = require("jsonwebtoken");
+const maxAge = 3 * 24 * 60 * 60;
+
+const createToken = (id, email) => {
+  return jwt.sign(
+    { id: id, email: email },
+    process.env.ACCESS_TOKEN_SECRET_USER,
+    {
+      expiresIn: maxAge,
+    }
+  );
+};
 
 exports.registerUser = (req, res) => {
+  const pool = req.pool;
   const {
     name,
     user_name,
@@ -30,43 +45,85 @@ exports.registerUser = (req, res) => {
       .json({ message: "Please provide all required fields." });
   }
 
-  // Insert the new user into the database
-  const pool = req.pool;
   const userId = uuidv4();
 
-  const query = `
-    INSERT INTO users (
-      user_id, name, user_name, password, email, phone_number, address, ward_no, city, profile_pic
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-  const values = [
-    userId,
-    name,
-    user_name,
-    password,
-    email,
-    phone_number,
-    address,
-    ward_no,
-    city,
-    profile_pic,
-  ];
-
-  pool.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error registering user:", error);
-      if (!res.headersSent) {
-        return res
-          .status(500)
-          .json({ message: "Error registering user.", error });
-      }
-    } else {
-      if (!res.headersSent) {
-        return res
-          .status(201)
-          .json({ message: "User registered successfully." });
-      }
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res
+        .status(500)
+        .json({ message: "Error registering user.", error: err });
     }
+
+    connection.query(
+      "SELECT email FROM users where email=?",
+      [email],
+      (err, result) => {
+        if (err) {
+          connection.release();
+          console.error("Error checking existing email:", err);
+          return res
+            .status(500)
+            .json({ message: "Error registering user.", error: err });
+        }
+
+        if (result && result.length > 0) {
+          connection.release();
+          return res
+            .status(400)
+            .json({ message: "Email has already been registered." });
+        }
+
+        bcrypt.hash(password, 8, (err, hashedPassword) => {
+          if (err) {
+            connection.release();
+            console.error("Error hashing password:", err);
+            return res
+              .status(500)
+              .json({ message: "Error registering user.", error: err });
+          }
+
+          const query = `
+          INSERT INTO users (
+            user_id, name, user_name, password, email, phone_number, address, ward_no, city, profile_pic
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+          const values = [
+            userId,
+            name,
+            user_name,
+            hashedPassword,
+            email,
+            phone_number,
+            address,
+            ward_no,
+            city,
+            profile_pic,
+          ];
+
+          connection.query(query, values, (err, rows) => {
+            connection.release();
+
+            if (err) {
+              console.error("Error inserting user into database:", err);
+              return res
+                .status(500)
+                .json({ message: "Error registering user.", error: err });
+            }
+
+            // User successfully registered
+            const token = createToken(userId, email); // Assuming createToken function is defined elsewhere
+
+            res.cookie("jwt", token, {
+              httpOnly: true,
+              maxAge: maxAge * 1000, // Assuming maxAge is defined
+            });
+
+            res.status(201).json({ status: "success", user_id: userId });
+          });
+        });
+      }
+    );
   });
 };
 
@@ -106,13 +163,47 @@ exports.getUserInfo = (req, res) => {
     }
   });
 };
+
+exports.postTask = (req, res) => {
+  const { user_id, post } = req.body;
+
+  // Validate request body
+  if (!user_id || !post.trim()) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  const pool = req.pool; // Assuming the pool is provided in req
+  const postId = uuidv4();
+  let selected_status = 0;
+
+  const query = `
+    INSERT INTO post (
+      post_id, user_id, post, selected_status
+    ) VALUES (?, ?, ?, ?)
+  `;
+  const values = [postId, user_id, post, selected_status];
+
+  pool.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error posting post:", error);
+      return res.status(500).json({ message: "Error posting post." });
+    } else {
+      return res
+        .status(201)
+        .json({ message: "User Post posted successfully." });
+    }
+  });
+};
+
 exports.loginUser = (req, res) => {
   const { email, password: checkPassword } = req.body;
   const pool = req.pool;
   pool.getConnection((err, connection) => {
     if (err) throw err;
     connection.query(
-      "SELECT user_id,email,password FROM user WHERE email=?",
+      "SELECT user_id,email,password FROM users WHERE email=?",
       [email],
       async (err, result) => {
         connection.release();
@@ -137,7 +228,7 @@ exports.loginUser = (req, res) => {
           try {
             const passwordsMatch = await comparePassword(
               checkPassword,
-              storedPassword,
+              storedPassword
             );
             if (passwordsMatch) {
               const token = createToken(stored_user_id, email);
@@ -159,7 +250,7 @@ exports.loginUser = (req, res) => {
               .json({ status: "error", error: "Internal Server Error" });
           }
         }
-      },
+      }
     );
   });
 };
