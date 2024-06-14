@@ -137,7 +137,7 @@ exports.loginHandy = (req, res) => {
           try {
             const passwordsMatch = await comparePassword(
               checkPassword,
-              storedPassword,
+              storedPassword
             );
             if (passwordsMatch) {
               const token = createToken(stored_handy_id, email);
@@ -159,7 +159,48 @@ exports.loginHandy = (req, res) => {
               .json({ status: "error", error: "Internal Server Error" });
           }
         }
-      },
+      }
     );
   });
 };
+
+// exports.getHandyFeed = (req, res) => {
+//   const { handyId } = req.params;
+
+//   if (!handyId) {
+//     return res.status(400).json({ message: "handyId is required" });
+//   }
+
+//   pool.getConnection((err, connection) => {
+//     if (err) {
+//       console.error("Error getting database connection:", err);
+//       return res.status(500).json({ message: "Error connecting to database." });
+//     }
+
+//     const sql = `
+//       SELECT p.post, p.user_id, u.*
+//       FROM post p
+//       INNER JOIN user u ON p.user_id = u.user_id
+//       INNER JOIN interested i ON p.post_id = i.post_id
+//       INNER JOIN handyman h ON h.handy_id = i.handy_id
+//       WHERE i.handy_id = ?
+//     `;
+
+//     connection.query(sql, [handyId], (err, rows) => {
+//       connection.release();
+
+//       if (err) {
+//         console.error("Error executing query:", err);
+//         return res
+//           .status(500)
+//           .json({ message: "Error querying database.", error: err });
+//       }
+
+//       res.status(200).json({
+//         status: "success",
+//         results: rows.length,
+//         data: { rows },
+//       });
+//     });
+//   });
+// };

@@ -8,5 +8,6 @@ const router = express.Router();
 router.route("/register").post(handyAuthmiddleware.registerHandy); //eslai middleware bata contoller ma lagnu xa
 router.post("/login", handyController.loginHandy);
 router.route("/:handyId").get(handyController.getHandymanInfo);
+// router.route("/handyPost/:handyId").get(handyController.getHandyFeed);
 
 module.exports = router;
