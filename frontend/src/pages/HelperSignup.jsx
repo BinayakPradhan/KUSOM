@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/auth";
 const initialState = {
@@ -184,14 +184,20 @@ export default function HelperSignup() {
                 <label htmlFor="h_expertise" className="block font-medium mb-1">
                   Field of Expertise
                 </label>
-                <input
-                  type="text"
+                <select
                   id="h_expertise"
                   name="h_expertise"
                   className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
                   value={user.h_expertise}
                   onChange={handleInput}
-                />
+                >
+                  <option value="">Select Field of Expertise</option>
+                  <option value="Carpentry">Carpentry</option>
+                  <option value="Cleaning">Cleaning</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Painting">Painting</option>
+                  <option value="Plumbing">Plumbing</option>
+                </select>
               </div>
               <div className="gap-4 mb-4">
                 <div>

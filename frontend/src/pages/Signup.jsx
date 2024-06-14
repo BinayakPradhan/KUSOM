@@ -22,7 +22,7 @@ export default function Signup() {
   const [user, setUser] = useState(initialState);
 
   const handleInput = (e) => {
-    const { name, type, value, files } = e.target;
+    const { name, value } = e.target;
 
     // if (type === "file") {
     //   setUser({
