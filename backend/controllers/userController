@@ -11,9 +11,8 @@ exports.registerUser = (req, res) => {
     address,
     ward_no,
     city,
+    profile_pic,
   } = req.body;
-
-  const profile_pic = req.files.profile_pic;
 
   if (
     !name ||
@@ -31,53 +30,43 @@ exports.registerUser = (req, res) => {
       .json({ message: "Please provide all required fields." });
   }
 
-  const uploadPath = `uploads/${profile_pic.name}`;
-  profile_pic.mv(uploadPath, (err) => {
-    if (err) {
-      console.error("Error uploading file:", err);
-      return res
-        .status(500)
-        .json({ message: "Error uploading file.", error: err });
-    }
+  // Insert the new user into the database
+  const pool = req.pool;
+  const userId = uuidv4();
 
-    // Insert the new user into the database
-    const pool = req.pool;
-    const userId = uuidv4();
+  const query = `
+    INSERT INTO users (
+      user_id, name, user_name, password, email, phone_number, address, ward_no, city, profile_pic
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    userId,
+    name,
+    user_name,
+    password,
+    email,
+    phone_number,
+    address,
+    ward_no,
+    city,
+    profile_pic,
+  ];
 
-    const query = `
-      INSERT INTO users (
-        user_id, name, user_name, password, email, phone_number, address, ward_no, city, profile_pic
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [
-      userId,
-      name,
-      user_name,
-      password,
-      email,
-      phone_number,
-      address,
-      ward_no,
-      city,
-      profile_pic.name, // Assuming `profile_pic.name` is the filename
-    ];
-
-    pool.query(query, values, (error, results) => {
-      if (error) {
-        console.error("Error registering user:", error);
-        if (!res.headersSent) {
-          return res
-            .status(500)
-            .json({ message: "Error registering user.", error });
-        }
-      } else {
-        if (!res.headersSent) {
-          return res
-            .status(201)
-            .json({ message: "User registered successfully." });
-        }
+  pool.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error registering user:", error);
+      if (!res.headersSent) {
+        return res
+          .status(500)
+          .json({ message: "Error registering user.", error });
       }
-    });
+    } else {
+      if (!res.headersSent) {
+        return res
+          .status(201)
+          .json({ message: "User registered successfully." });
+      }
+    }
   });
 };
 
