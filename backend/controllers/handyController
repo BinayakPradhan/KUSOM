@@ -1,0 +1,107 @@
+const { v4: uuidv4 } = require("uuid");
+
+exports.registerHandyman = (req, res) => {
+  const {
+    handy_name,
+    handy_user_name,
+    phone_number,
+    h_email,
+    h_bio,
+    h_field,
+    h_photo,
+    h_password,
+    h_fee,
+    h_citizenship_photo,
+    h_expertise,
+  } = req.body;
+
+  if (
+    !handy_name ||
+    !handy_user_name ||
+    !phone_number ||
+    !h_email ||
+    !h_bio ||
+    !h_field ||
+    !h_photo ||
+    !h_password ||
+    !h_fee ||
+    !h_citizenship_photo ||
+    !h_expertise
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  // Insert the new handyman into the database
+  const pool = req.pool;
+  const handyId = uuidv4();
+
+  const query = `
+    INSERT INTO handyman (
+      handy_id, handy_name, handy_user_name, phone_number, h_email, h_bio, h_field, h_photo, h_password, h_fee, h_citizenship_photo, h_expertise
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    handyId,
+    handy_name,
+    handy_user_name,
+    phone_number,
+    h_email,
+    h_bio,
+    h_field,
+    h_photo,
+    h_password,
+    h_fee,
+    h_citizenship_photo,
+    h_expertise,
+  ];
+
+  pool.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error registering handyman:", error);
+      if (!res.headersSent) {
+        return res
+          .status(500)
+          .json({ message: "Error registering handyman.", error });
+      }
+    } else {
+      if (!res.headersSent) {
+        return res
+          .status(201)
+          .json({ message: "Handyman registered successfully." });
+      }
+    }
+  });
+};
+
+exports.getHandymanInfo = (req, res) => {
+  const { handyId } = req.params;
+
+  // Validate the handymanId
+  if (!handyId) {
+    return res.status(400).json({ message: "Handyman ID is required." });
+  }
+
+  // Query the handyman info from the database
+  const pool = req.pool;
+
+  const query = `
+    SELECT handy_id, handy_name, handy_user_name, phone_number, h_email, h_bio, h_field, h_photo, h_fee, h_citizenship_photo, h_expertise
+    FROM handyman
+    WHERE handy_id = ?
+  `;
+
+  pool.query(query, [handyId], (error, results) => {
+    if (error) {
+      console.error("Error retrieving handyman info:", error);
+      return res
+        .status(500)
+        .json({ message: "Error retrieving handyman info.", error });
+    } else if (results.length === 0) {
+      return res.status(404).json({ message: "Handyman not found." });
+    } else {
+      return res.status(200).json(results[0]);
+    }
+  });
+};

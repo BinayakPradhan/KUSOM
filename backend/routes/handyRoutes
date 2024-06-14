@@ -1,0 +1,9 @@
+require("dotenv").config();
+
+const express = require("express");
+const handyController = require("../controllers/handyController");
+const router = express.Router();
+
+router.route("/register").post(handyController.registerHandyman);
+router.route("/:handyId").get(handyController.getHandymanInfo);
+module.exports = router;

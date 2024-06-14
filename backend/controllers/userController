@@ -1,0 +1,119 @@
+// const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
+
+exports.registerUser = (req, res) => {
+  const {
+    name,
+    user_name,
+    password,
+    email,
+    phone_number,
+    address,
+    ward_no,
+    city,
+  } = req.body;
+
+  const profile_pic = req.files.profile_pic;
+
+  if (
+    !name ||
+    !user_name ||
+    !password ||
+    !email ||
+    !phone_number ||
+    !address ||
+    !ward_no ||
+    !city ||
+    !profile_pic
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  const uploadPath = `uploads/${profile_pic.name}`;
+  profile_pic.mv(uploadPath, (err) => {
+    if (err) {
+      console.error("Error uploading file:", err);
+      return res
+        .status(500)
+        .json({ message: "Error uploading file.", error: err });
+    }
+
+    // Insert the new user into the database
+    const pool = req.pool;
+    const userId = uuidv4();
+
+    const query = `
+      INSERT INTO users (
+        user_id, name, user_name, password, email, phone_number, address, ward_no, city, profile_pic
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+      userId,
+      name,
+      user_name,
+      password,
+      email,
+      phone_number,
+      address,
+      ward_no,
+      city,
+      profile_pic.name, // Assuming `profile_pic.name` is the filename
+    ];
+
+    pool.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Error registering user:", error);
+        if (!res.headersSent) {
+          return res
+            .status(500)
+            .json({ message: "Error registering user.", error });
+        }
+      } else {
+        if (!res.headersSent) {
+          return res
+            .status(201)
+            .json({ message: "User registered successfully." });
+        }
+      }
+    });
+  });
+};
+
+exports.getUserInfo = (req, res) => {
+  const { userId } = req.params;
+
+  // Validate the userId
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required." });
+  }
+
+  // Query the user info from the database
+  const pool = req.pool;
+
+  const query = `
+    SELECT user_id, name, user_name, email, phone_number, address, ward_no, city, profile_pic
+    FROM users
+    WHERE user_id = ?
+  `;
+
+  pool.query(query, [userId], (error, results) => {
+    if (error) {
+      console.error("Error retrieving user info:", error);
+      if (!res.headersSent) {
+        return res
+          .status(500)
+          .json({ message: "Error retrieving user info.", error });
+      }
+    } else if (results.length === 0) {
+      if (!res.headersSent) {
+        return res.status(404).json({ message: "User not found." });
+      }
+    } else {
+      if (!res.headersSent) {
+        return res.status(200).json(results[0]);
+      }
+    }
+  });
+};
