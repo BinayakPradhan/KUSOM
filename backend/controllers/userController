@@ -140,27 +140,60 @@ exports.postTask = (req, res) => {
   });
 };
 
-exports.getPostData = (req, res) => {
+exports.loginUser = (req, res) => {
+  const { email, password: checkPassword } = req.body;
   const pool = req.pool;
   pool.getConnection((err, connection) => {
     if (err) throw err;
-    // console.log(`connected as id ${connection.threadId}`);
-
-    connection.query("Select * from post", (err, rows) => {
-      connection.release();
-
-      if (!err) {
-        res.status(200).json({
-          status: "success",
-          results: rows.length,
-          data: {
-            rows,
-          },
-          // data,
-        });
-      } else {
-        console.log(err);
+    connection.query(
+      "SELECT user_id,email,password FROM user WHERE email=?",
+      [email],
+      async (err, result) => {
+        connection.release();
+        if (err) {
+          // Handle the error
+          console.log("Error retrieving user:", err);
+          return res
+            .status(500)
+            .json({ status: "error", error: "Internal Server Error" });
+        }
+        if (result.length === 0) {
+          // If user not found, send appropriate response
+          return res
+            .status(404)
+            .json({ status: "error", error: "User not found" });
+        }
+        if (result.length === 1) {
+          const storedPassword = result[0].password;
+          const storedEmail = result[0].email;
+          const stored_user_id = result[0].user_id;
+          // console.log(user_id);
+          try {
+            const passwordsMatch = await comparePassword(
+              checkPassword,
+              storedPassword
+            );
+            if (passwordsMatch) {
+              const token = createToken(stored_user_id, email);
+              res.cookie("jwt", token, {
+                // domain: "localhost",
+                httpOnly: true,
+                maxAge: maxAge * 1000,
+              });
+              res.json({ status: "success", user_id: stored_user_id });
+            } else {
+              return res
+                .status(401)
+                .json({ status: "error", error: "Incorrect Password" });
+            }
+          } catch (error) {
+            console.error("Error comparing passwords:", error);
+            return res
+              .status(500)
+              .json({ status: "error", error: "Internal Server Error" });
+          }
+        }
       }
-    });
+    );
   });
 };

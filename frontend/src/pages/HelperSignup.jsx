@@ -1,204 +1,255 @@
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../context/auth";
+const initialState = {
+  handy_name: "",
+  handy_user_name: "",
+  phone_number: 0,
+  h_email: "",
+  h_bio: "",
+  h_field: "",
+  h_photo: "pis",
+  h_password: "",
+  h_fee: 0,
+  h_citizenship_photo: "citizen",
+  h_expertise: "",
+};
 export default function HelperSignup() {
+  const { storeTokenInLS } = useAuth();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(initialState);
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "h_fee" || name === "phone_number") {
+      setUser({
+        ...user,
+        [name]: Number(value),
+      });
+    } else {
+      setUser({
+        ...user,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(user);
+
+    try {
+      const response = await fetch(`http://127.0.0.1:9000/handys/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`response from server`, data);
+        storeTokenInLS(data.token);
+
+        setUser(initialState);
+        alert("Signup Successful");
+        navigate("/login");
+      } else {
+        const errorData = await response.json();
+        console.log("Server response:", errorData);
+        alert(`Signup failed: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error in fetch POST:", error);
+    }
+  };
   return (
-    <div className="bg-gray-100">
-      <div className="flex justify-center items-center h-screen">
-        <div className="grid grid-cols-1 md:grid-cols-2 bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="p-6">
-            <h2 className="text-xl font-bold mb-4">General Information</h2>
-            <div className="mb-4">
-              <label htmlFor="title" className="block font-medium mb-1">
-                Title
-              </label>
-              <select
-                id="title"
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              >
-                <option>Select Title</option>
-                {/* Add options for titles */}
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label htmlFor="firstName" className="block font-medium mb-1">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-                />
+    <div className="px-12">
+      <div className="flex justify-center items-center lg:h-screen">
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 bg-white">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4">Be a Handyman</h2>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label
+                    htmlFor="handy_name"
+                    className="block font-medium mb-1"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="handy_name"
+                    name="handy_name"
+                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border"
+                    value={user.handy_name}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="handy_user_name"
+                    className="block font-medium mb-1"
+                  >
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="handy_user_name"
+                    name="handy_user_name"
+                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border"
+                    value={user.handy_user_name}
+                    onChange={handleInput}
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="lastName" className="block font-medium mb-1">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="position" className="block font-medium mb-1">
-                Position
-              </label>
-              <select
-                id="position"
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              >
-                <option>Select Position</option>
-                {/* Add options for positions */}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="company" className="block font-medium mb-1">
-                Company
-              </label>
-              <input
-                type="text"
-                id="company"
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
+
+              <div className="mb-4">
                 <label
-                  htmlFor="businessArena"
+                  htmlFor="phone_number"
                   className="block font-medium mb-1"
                 >
-                  Business Arena
-                </label>
-                <input
-                  type="text"
-                  id="businessArena"
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-                />
-              </div>
-              <div>
-                <label htmlFor="employees" className="block font-medium mb-1">
-                  Employees
-                </label>
-                <select
-                  id="employees"
-                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
-                >
-                  <option>Select Employees</option>
-                  {/* Add options for employees */}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div className="bg-indigo-600 text-white p-6">
-            <h2 className="text-xl font-bold mb-4">Contact Details</h2>
-            <div className="mb-4">
-              <label htmlFor="street" className="block font-medium mb-1">
-                Street + Nr
-              </label>
-              <input
-                type="text"
-                id="street"
-                className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="additionalInformation"
-                className="block font-medium mb-1"
-              >
-                Additional Information
-              </label>
-              <input
-                type="text"
-                id="additionalInformation"
-                className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label htmlFor="zipCode" className="block font-medium mb-1">
-                  Zip Code
-                </label>
-                <input
-                  type="text"
-                  id="zipCode"
-                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-                />
-              </div>
-              <div>
-                <label htmlFor="place" className="block font-medium mb-1">
-                  Place
-                </label>
-                <select
-                  id="place"
-                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-                >
-                  <option>Select Place</option>
-                  {/* Add options for places */}
-                </select>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="country" className="block font-medium mb-1">
-                Country
-              </label>
-              <select
-                id="country"
-                className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-              >
-                <option>Select Country</option>
-                {/* Add options for countries */}
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label htmlFor="code" className="block font-medium mb-1">
-                  Code +
-                </label>
-                <input
-                  type="text"
-                  id="code"
-                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-                />
-              </div>
-              <div>
-                <label htmlFor="phoneNumber" className="block font-medium mb-1">
                   Phone Number
                 </label>
                 <input
                   type="text"
-                  id="phoneNumber"
-                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
+                  id="phone_number"
+                  name="phone_number"
+                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border"
+                  value={user.phone_number}
+                  onChange={handleInput}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="h_email" className="block font-medium mb-1">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  id="h_email"
+                  name="h_email"
+                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border"
+                  value={user.h_email}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="h_photo" className="block font-medium mb-1">
+                  Photo
+                </label>
+                <input
+                  type="file"
+                  id="h_photo"
+                  name="h_photo"
+                  // accept="image/*"
+                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border p-2"
+                  onChange={handleInput}
+                />
+              </div>
+              <div>
+                <label htmlFor="h_password" className="block font-medium mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="h_password"
+                  name="h_password"
+                  className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border"
+                  value={user.h_password}
+                  onChange={handleInput}
                 />
               </div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block font-medium mb-1">
-                Your Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
-              />
-            </div>
-            <div className="mb-6">
-              <label className="inline-flex items-center">
+            <div className="bg-indigo-600 text-white p-6">
+              <div className="mb-4">
+                <label htmlFor="h_fee" className="block font-medium mb-1">
+                  Hourly Rate
+                </label>
                 <input
-                  type="checkbox"
-                  className="form-checkbox text-indigo-600 rounded focus:ring-indigo-500"
+                  type="text"
+                  id="h_fee"
+                  name="h_fee"
+                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
+                  value={user.h_fee}
+                  onChange={handleInput}
                 />
-                <span className="ml-2">
-                  I do accept the Terms and Conditions
-                </span>
-              </label>
-            </div>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="h_expertise" className="block font-medium mb-1">
+                  Field of Expertise
+                </label>
+                <input
+                  type="text"
+                  id="h_expertise"
+                  name="h_expertise"
+                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
+                  value={user.h_expertise}
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="gap-4 mb-4">
+                <div>
+                  <label htmlFor="h_bio" className="block font-medium mb-1">
+                    Write a Bio
+                  </label>
+                  <input
+                    type="text"
+                    id="h_bio"
+                    name="h_bio"
+                    className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
+                    value={user.h_bio}
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
 
-            <button className="w-full bg-white text-indigo-600 py-2 px-4 rounded-md hover:bg-indigo-700 hover:text-white transition-colors">
-              Register Badge
-            </button>
+              <div className=" gap-4 mb-4">
+                <div>
+                  <label
+                    htmlFor="h_citizenship_photo"
+                    className="block font-medium mb-1"
+                  >
+                    Citizenship
+                  </label>
+                  <input
+                    type="file"
+                    id="h_citizenship_photo"
+                    name="h_citizenship_photo"
+                    // accept="image/*"
+                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-indigo-200 border p-2"
+                    onChange={handleInput}
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="h_field" className="block font-medium mb-1">
+                  Field
+                </label>
+                <input
+                  type="text"
+                  id="h_field"
+                  name="h_field"
+                  className="w-full bg-indigo-700 text-white rounded-md shadow-sm focus:bg-indigo-600 focus:ring focus:ring-indigo-200"
+                  value={user.h_field}
+                  onChange={handleInput}
+                />
+              </div>
+              <button
+                className="w-full bg-white text-indigo-600 py-2 px-4 rounded-md hover:bg-indigo-700 hover:text-white transition-colors"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Register as Handyman
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
