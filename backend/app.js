@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql");
 const userRoutes = require("./routes/userRoutes");
 const handyRoutes = require("./routes/handyRoutes");
+const { v4: uuidv4 } = require("uuid");
 // const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
@@ -54,6 +55,8 @@ app.use(
   },
   handyRoutes
 );
+
+//Get all posts
 app.get("/getPostData", (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
@@ -79,9 +82,47 @@ app.get("/getPostData", (req, res) => {
     });
   });
 });
-// app.get("/", (req, res) => {
-//   res.send("Henlo, World!");
-// });
+
+//To create interested table
+app.post("/processMLData", (req, res) => {
+  const { expertise, post_id } = req.body;
+
+  // Validate input
+  if (!expertise || !post_id) {
+    return res
+      .status(400)
+      .json({ error: "expertise and post_id are required" });
+  }
+
+  // Example SQL query to insert into interested table based on ML input
+  const sql = `
+    INSERT INTO interested (interested_id, handy_id, post_id, post, interested_status)
+    SELECT UUID(), h.handy_id, p.post_id, p.post, 0 AS interested_status
+    FROM handyman h
+    INNER JOIN post p ON h.h_expertise = ? AND p.post_id = ? ;
+  `;
+  const values = [expertise, post_id];
+
+  // Use pool directly to get a connection and execute the query
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res.status(500).json({ error: "Error connecting to database." });
+    }
+
+    connection.query(sql, values, (err, result) => {
+      connection.release(); // Release the connection back to the pool
+
+      if (err) {
+        console.error("Error processing ML data:", err);
+        return res.status(500).json({ error: "Error processing ML data" });
+      }
+
+      console.log("Inserted rows into interestedTable:", result.affectedRows);
+      res.status(200).json({ message: "Data processed successfully" });
+    });
+  });
+});
 
 //Listen on environment on port
 app.listen(port, () => console.log(`Listen on port ${port}`));
