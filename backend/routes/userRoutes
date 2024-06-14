@@ -3,8 +3,10 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const userAuthmiddleware = require("../Middleware/userAuthMiddleware");
 
-router.post("/register", userController.registerUser);
+router.post("/register", userAuthmiddleware.registerUser);//eslai ni controller ma lagnu xa
+router.post("/login", userController.loginUser);
 router.get("/:userId", userController.getUserInfo);
 
 module.exports = router;

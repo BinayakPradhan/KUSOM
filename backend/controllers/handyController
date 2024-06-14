@@ -105,3 +105,61 @@ exports.getHandymanInfo = (req, res) => {
     }
   });
 };
+
+exports.loginHandy = (req, res) => {
+  const { email, password: checkPassword } = req.body;
+  const pool = req.pool;
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    connection.query(
+      "SELECT handy_id,email,password FROM user WHERE email=?",
+      [email],
+      async (err, result) => {
+        connection.release();
+        if (err) {
+          // Handle the error
+          console.log("Error retrieving user:", err);
+          return res
+            .status(500)
+            .json({ status: "error", error: "Internal Server Error" });
+        }
+        if (result.length === 0) {
+          // If user not found, send appropriate response
+          return res
+            .status(404)
+            .json({ status: "error", error: "User not found" });
+        }
+        if (result.length === 1) {
+          const storedPassword = result[0].password;
+          const storedEmail = result[0].email;
+          const stored_handy_id = result[0].handy_id;
+          // console.log(handy_id);
+          try {
+            const passwordsMatch = await comparePassword(
+              checkPassword,
+              storedPassword,
+            );
+            if (passwordsMatch) {
+              const token = createToken(stored_handy_id, email);
+              res.cookie("jwt", token, {
+                // domain: "localhost",
+                httpOnly: true,
+                maxAge: maxAge * 1000,
+              });
+              res.json({ status: "success", handy_id: stored_handy_id });
+            } else {
+              return res
+                .status(401)
+                .json({ status: "error", error: "Incorrect Password" });
+            }
+          } catch (error) {
+            console.error("Error comparing passwords:", error);
+            return res
+              .status(500)
+              .json({ status: "error", error: "Internal Server Error" });
+          }
+        }
+      },
+    );
+  });
+};
