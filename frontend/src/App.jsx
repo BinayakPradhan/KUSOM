@@ -13,6 +13,8 @@ import Navbar from "./components/Navbar";
 import ChooseLogin from "./pages/ChooseLogin";
 import Handyman from "./pages/Handyman";
 import Business from "./pages/Business";
+import History from "./pages/History";
+import Shop from "./pages/Shop";
 import { useAuth } from "./context/auth";
 
 const App = () => {
@@ -33,6 +35,8 @@ const App = () => {
           <Route path="/user" element={<User />} />
           <Route path="/handyman" element={<Handyman />} />
           <Route path="/business" element={<Business />} />
+          <Route path="/user/history" element={<History />} />
+          <Route path="/user/shop" element={<Shop />} />
 
           <Route path="*" element={<Error />} />
         </Routes>

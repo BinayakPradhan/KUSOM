@@ -14,6 +14,7 @@ export default function Login() {
   const { storeTokenInLS } = useAuth();
   const navigate = useNavigate();
   const [user, setUser] = useState(initialState);
+  let userId = "";
 
   function handleInput(e) {
     const { name, value } = e.target;
@@ -36,6 +37,7 @@ export default function Login() {
         const data = await response.json();
         console.log("response from login", data);
         storeTokenInLS(data.jwt);
+        userId = data.user_id;
         // Retrieve token from cookies
         // const token = Cookies.get("token");
         // console.log(token);
@@ -44,7 +46,7 @@ export default function Login() {
         // storeTokenInLS(token);
         setUser(initialState);
 
-        navigate("/user");
+        navigate("/user", { state: { userId: data.user_id } });
 
         axios.defaults.headers.common["Authorization"] = `Bearer ${data.jwt}`;
       } else {
