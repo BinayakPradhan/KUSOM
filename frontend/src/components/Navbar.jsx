@@ -1,41 +1,96 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import logo from "../assets/svg/logo-no-background.svg";
+import { HiMenu } from "react-icons/hi"; // Import the menu icon from react-icons (example)
 import { useAuth } from "../context/auth";
-export default function Navbar() {
-  const { isLoggedIn } = useAuth();
-  return (
-    <>
-      <header className="bg-slate-600">
-        <div className="max-w-7xl py-8 px-6 flex  justify-between">
-          <div>
-            <NavLink to="/">
-              <img src={logo} alt="HomeHelp Logo" className="w-48" />
-            </NavLink>
-          </div>
-          <nav>
-            <ul className="flex  gap-32 text-white">
-              {isLoggedIn ? (
-                <li>
-                  <NavLink to="/logout">Logout</NavLink>
-                </li>
-              ) : (
-                <>
-                  <li>
-                    <NavLink to="/signup">Sign Up</NavLink>
-                  </li>
+import logo from "../assets/svg/logo-no-background.svg";
+import Button from "./Button";
 
-                  <li>
-                    <NavLink to="/chooselogin">Login</NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/helpersignup">Become a Handyman</NavLink>
-                  </li>
-                </>
-              )}
-            </ul>
-          </nav>
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { isLoggedIn } = useAuth(); // Assuming you have useAuth hook implemented
+
+  return (
+    <header className="bg-slate-600">
+      <div className="max-w-screen py-4 px-6 md:py-8 md:px-6 flex justify-between items-center">
+        {/* Logo */}
+        <NavLink to="/">
+          <img src={logo} alt="HomeHelp Logo" className="w-32 h-auto" />
+        </NavLink>
+
+        {/* Menu Icon for Small Screens */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white focus:outline-none"
+          >
+            <HiMenu className="w-8 h-8" />
+          </button>
         </div>
-      </header>
-    </>
+
+        {/* Nav Links */}
+        <nav className="md:flex md:items-center md:justify-end hidden">
+          <ul className="flex gap-8 text-white items-center">
+            {isLoggedIn ? (
+              <li>
+                <NavLink to="/logout">Logout</NavLink>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <NavLink to="/signup">Sign Up</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/chooselogin">Login</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/helpersignup">
+                    <Button topic={"Become a Handyman"} />
+                  </NavLink>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
+      </div>
+
+      {/* Dropdown Menu for Small Screens */}
+      {isOpen && (
+        <div className="md:hidden bg-white shadow-lg">
+          <div className="py-1">
+            {isLoggedIn ? (
+              <NavLink
+                to="/logout"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >
+                Logout
+              </NavLink>
+            ) : (
+              <>
+                <NavLink
+                  to="/signup"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >
+                  Sign Up
+                </NavLink>
+                <NavLink
+                  to="/chooselogin"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/helpersignup"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >
+                  Become a Handyman
+                </NavLink>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
-}
+};
+
+export default Navbar;
