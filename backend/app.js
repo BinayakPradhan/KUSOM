@@ -85,6 +85,7 @@ app.get("/getPostData", (req, res) => {
 
 //To create interested table
 app.post("/processMLData", (req, res) => {
+  console.log(req.body);
   const { expertise, post_id } = req.body;
 
   // Validate input
@@ -93,6 +94,7 @@ app.post("/processMLData", (req, res) => {
       .status(400)
       .json({ error: "expertise and post_id are required" });
   }
+  console.log(expertise, post_id);
 
   // Example SQL query to insert into interested table based on ML input
   const sql = `
