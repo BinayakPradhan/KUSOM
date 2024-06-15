@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/auth";
-import Cookies from "js-cookie";
+
 import axios from "axios";
 const initialState = {
   email: "",
@@ -120,10 +120,7 @@ export default function Login() {
             </a>
 
             <div className="mt-6 text-center">
-              <a
-                href="#"
-                className="text-sm text-blue-500 hover:underline dark:text-blue-400"
-              >
+              <a className="text-sm text-blue-500 hover:underline dark:text-blue-400">
                 Don’t have an account yet? Sign up
               </a>
             </div>

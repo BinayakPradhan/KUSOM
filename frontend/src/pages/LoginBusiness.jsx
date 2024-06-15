@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/auth";
-import Cookies from "js-cookie";
+
 import axios from "axios";
 const initialState = {
   email: "",

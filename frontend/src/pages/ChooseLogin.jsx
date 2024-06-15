@@ -1,5 +1,3 @@
-import { FaUser, FaUserCog, FaBusinessTime } from "react-icons/fa";
-import User from "../assets/user.png";
 import Handyman from "../assets/handyman.png";
 import NewUser from "../assets/new.png";
 import Business from "../assets/business.png";

@@ -3,34 +3,34 @@ import { useNavigate } from "react-router-dom";
 import { HiMail, HiLockClosed } from "react-icons/hi";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/auth";
-import Cookies from "js-cookie";
+
 import axios from "axios";
 const initialState = {
-  email: "",
-  password: "",
+  h_email: "",
+  h_password: "",
 };
 
 export default function Login() {
   const { storeTokenInLS } = useAuth();
   const navigate = useNavigate();
-  const [user, setUser] = useState(initialState);
+  const [handy, setHandy] = useState(initialState);
 
   function handleInput(e) {
     const { name, value } = e.target;
-    setUser({
-      ...user,
+    setHandy({
+      ...handy,
       [name]: value,
     });
   }
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://127.0.0.1:9000/handyman/login`, {
+      const response = await fetch(`http://127.0.0.1:9000/handys/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(handy),
       });
       if (response.ok) {
         const data = await response.json();
@@ -42,7 +42,7 @@ export default function Login() {
 
         // Store the token in localStorage or in your auth context
         // storeTokenInLS(token);
-        setUser(initialState);
+        setHandy(initialState);
 
         navigate("/handyman");
 
@@ -76,8 +76,8 @@ export default function Login() {
               placeholder="Email address"
               autoComplete="off"
               required
-              name="email"
-              id="email"
+              name="h_email"
+              id="h_email"
               onChange={handleInput}
             />
           </div>
@@ -93,8 +93,8 @@ export default function Login() {
               placeholder="Password"
               autoComplete="off"
               required
-              name="password"
-              id="password"
+              name="h_password"
+              id="h_password"
               onChange={handleInput}
             />
           </div>
@@ -120,10 +120,7 @@ export default function Login() {
             </a>
 
             <div className="mt-6 text-center">
-              <a
-                href="#"
-                className="text-sm text-blue-500 hover:underline dark:text-blue-400"
-              >
+              <a className="text-sm text-blue-500 hover:underline dark:text-blue-400">
                 Don’t have an account yet? Sign up
               </a>
             </div>
