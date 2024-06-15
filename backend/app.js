@@ -203,11 +203,6 @@ app.post("/processMLData", async (req, res) => {
     }
   }
 });
-// Middleware to attach the database pool to each request
-app.use((req, res, next) => {
-  req.pool = pool; // Attach the database pool to request object
-  next();
-});
 
 // Assuming you have imported necessary modules and set up your app and database connection
 
@@ -229,12 +224,6 @@ app.get("/shop", (req, res) => {
     // If successful, return the products with seller information
     res.status(200).json({ products: results });
   });
-});
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
 
 //Listen on environment on port
