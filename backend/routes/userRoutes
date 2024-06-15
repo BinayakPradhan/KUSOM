@@ -11,4 +11,5 @@ router.get("/:userId", userController.getUserInfo);
 router.post("/posttask", userController.postTask);
 router.get("/post/:postId", userController.getUserFeed);
 router.post("/postProduct", userController.postProduct);
+
 module.exports = router;
