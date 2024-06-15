@@ -375,3 +375,60 @@ exports.postProduct = (req, res) => {
     });
   });
 };
+
+exports.getInterestedData = (req, res) => {
+  const { postId } = req.params;
+  const pool = req.pool;
+
+  // Query to fetch handy_id and post from interested table
+  const query = `
+    SELECT handy_id, post_id, post
+    FROM interested
+    WHERE post_id = ? AND interested_status = 1
+  `;
+
+  pool.query(query, [postId], (error, results) => {
+    if (error) {
+      console.error("Error fetching interested data:", error);
+      return res.status(500).json({ error: "Error fetching interested data" });
+    }
+
+    // Assuming results contains handy_id among other fields
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No interested data found for the postId" });
+    }
+
+    const handyIds = results.map((row) => row.handy_id);
+
+    // Query to fetch handyman information based on handy_id
+    const handymanQuery = `
+      SELECT *
+      FROM handyman
+      WHERE handy_id IN (?)
+    `;
+
+    pool.query(handymanQuery, [handyIds], (err, handymanResults) => {
+      if (err) {
+        console.error("Error fetching handyman data:", err);
+        return res.status(500).json({ error: "Error fetching handyman data" });
+      }
+
+      // Combine the original results with handyman information
+      const combinedResults = results.map((row) => {
+        const handymanInfo = handymanResults.find(
+          (handyman) => handyman.handy_id === row.handy_id
+        );
+        return {
+          handy_id: row.handy_id,
+          post_id: row.post_id,
+          post: row.post,
+          handyman: handymanInfo, // Include handyman information
+        };
+      });
+
+      res.status(200).json({ interestedData: combinedResults });
+    });
+  });
+};
