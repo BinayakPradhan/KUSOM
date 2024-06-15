@@ -432,3 +432,47 @@ exports.getInterestedData = (req, res) => {
     });
   });
 };
+exports.getPost = (req, res) => {
+  const { userId } = req.params;
+
+  // Validate input
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required" });
+  }
+
+  const pool = req.pool;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res.status(500).json({ message: "Error connecting to database." });
+    }
+
+    const sql = `SELECT post_id, post, selected_status FROM post WHERE user_id = ?`;
+
+    connection.query(sql, [userId], (err, rows) => {
+      connection.release();
+
+      if (err) {
+        console.error("Error executing query:", err);
+        return res
+          .status(500)
+          .json({ message: "Error querying database.", error: err });
+      }
+
+      console.log("Query executed successfully, rows:", rows); // Added for debugging
+
+      if (rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No posts found for this user." });
+      } else {
+        res.status(200).json({
+          status: "success",
+          results: rows.length,
+          data: { rows },
+        });
+      }
+    });
+  });
+};

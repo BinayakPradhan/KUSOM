@@ -231,12 +231,6 @@ app.get("/shop", (req, res) => {
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 //Listen on environment on port
 app.listen(port, () => console.log(`Listen on port ${port}`));
 module.exports = pool;
