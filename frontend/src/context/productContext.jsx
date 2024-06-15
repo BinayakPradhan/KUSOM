@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 import reducer from "../reducer/productReducer";
 
 const AppContext = createContext();
-const API = "http://127.0.0.1:3001/foods";
+const API = "http://127.0.0.1:9000/shop";
 const initialState = {
   isLoading: false,
   isError: false,
@@ -15,6 +15,7 @@ const initialState = {
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  console.log(state);
 
   const getProducts = async (url) => {
     dispatch({ type: "SET_LOADING" });
@@ -23,8 +24,9 @@ const AppProvider = ({ children }) => {
         method: "GET",
       });
       const data = await response.json();
-      const products = data.data.rows;
-      // console.log(data);
+      const products = data.products;
+      // console.log(data.products);
+      console.log(products);
       dispatch({ type: "MY_API_DATA", payload: products });
     } catch (error) {
       dispatch({ type: "API_ERROR" });
@@ -38,8 +40,8 @@ const AppProvider = ({ children }) => {
     try {
       const response = await fetch(url, { method: "GET" });
       const singleProduct = await response.json();
-      // console.log(singleProduct);
       dispatch({ type: "SET_SINGLE_PRODUCT", payload: singleProduct[0] });
+      console.log("singleProduct", singleProduct);
     } catch (error) {
       dispatch({ type: "SET_SINGLE_ERROR" });
     }

@@ -1,21 +1,16 @@
-import propTypes from "prop-types";
 import { AiOutlineStar, AiFillStar, AiOutlineShopping } from "react-icons/ai";
 // import Product from "../pages/Product";
-
+import Star from "./Star";
 import { NavLink } from "react-router-dom";
-import { useCartContext } from "../context/cartContext";
 
 const ProductCard = (singleProduct) => {
-  // const navigate = useNavigate();
-  const { id, img, name, price } = singleProduct;
-  const { addToCart } = useCartContext();
-  const amount = 1;
-  // console.log(singleProduct);
+  const { id, img, name, price, Quality } = singleProduct;
+  console.log(singleProduct);
 
   return (
-    <div className="mb-auto w-full">
+    <div className="mb-auto w-64 p-4 flex-wrap">
       <div className="border border-gray-200 hover:border-gray-400 transition-transform rounded-lg relative">
-        <NavLink to={`/product/${id}`}>
+        <NavLink to={`/user/shop/product/${id}`}>
           <img
             className="w-full h-[200px] object-cover rounded-lg rounded-b-none"
             src={img}
@@ -23,13 +18,17 @@ const ProductCard = (singleProduct) => {
           />
         </NavLink>
         <div className="space-y-2 relative p-4">
-          <div className="text-yellow-400 flex gap-[5px] text-[20px]">
+          {/* <div className="text-yellow-400 flex gap-[5px] text-[20px]">
             <AiFillStar />
             <AiFillStar />
             <AiFillStar />
             <AiFillStar />
             <AiOutlineStar />
-          </div>
+          </div> */}
+          <Star
+            className="text-yellow-400 flex gap-[5px] text-[20px]"
+            stars={Quality}
+          />
         </div>
         <div className="grid grid-cols-1 gap-2 px-3 py-1">
           <h3 className="font-medium">
@@ -40,12 +39,7 @@ const ProductCard = (singleProduct) => {
               {`Rs.` + price}
             </h3>
 
-            <button
-              className="absolute border-none bottom-2.5 right-2 bg-warning text-lightColor text-[24px]  w-[50px] h-[50px] rounded-full flex justify-content-center items-center cursor-pointer pl-3 gap-1 hover:bg-primary hover:text-textColor"
-              onClick={() => {
-                addToCart(id, name, img, price, amount, singleProduct);
-              }}
-            >
+            <button className="absolute border-none bottom-2.5 right-2 bg-warning text-lightColor text-[24px]  w-[50px] h-[50px] rounded-full flex justify-content-center items-center cursor-pointer pl-3 gap-1 hover:bg-primary hover:text-textColor">
               <AiOutlineShopping />
             </button>
           </div>
@@ -53,13 +47,6 @@ const ProductCard = (singleProduct) => {
       </div>
     </div>
   );
-};
-ProductCard.propTypes = {
-  img: propTypes.string,
-  name: propTypes.string,
-  price: propTypes.number,
-  cuisine: propTypes.string,
-  ingredients: propTypes.string,
 };
 
 export default ProductCard;

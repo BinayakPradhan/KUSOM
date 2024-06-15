@@ -15,6 +15,7 @@ import Handyman from "./pages/Handyman";
 import Business from "./pages/Business";
 import History from "./pages/History";
 import Shop from "./pages/Shop";
+import Product from "./pages/Product";
 import { useAuth } from "./context/auth";
 
 const App = () => {
@@ -37,7 +38,7 @@ const App = () => {
           <Route path="/business" element={<Business />} />
           <Route path="/user/history" element={<History />} />
           <Route path="/user/shop" element={<Shop />} />
-
+          <Route path="/user/shop/product/:id" element={<Product />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>
