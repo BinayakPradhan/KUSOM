@@ -1,6 +1,22 @@
+const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
+const comparePassword = require("./../utils/comparePassword");
+
+const jwt = require("jsonwebtoken");
+const maxAge = 3 * 24 * 60 * 60;
+
+const createToken = (id, email) => {
+  return jwt.sign(
+    { id: id, email: email },
+    process.env.ACCESS_TOKEN_SECRET_HANDY,
+    {
+      expiresIn: maxAge,
+    }
+  );
+};
 
 exports.registerHandyman = (req, res) => {
+  const pool = req.pool;
   const {
     handy_name,
     handy_user_name,
@@ -30,48 +46,89 @@ exports.registerHandyman = (req, res) => {
   ) {
     return res
       .status(400)
-      .json({ message: "Please provide all required fields." });
+      .json({ message: "Please provide allll required fields." });
   }
 
-  // Insert the new handyman into the database
-  const pool = req.pool;
   const handyId = uuidv4();
 
-  const query = `
-    INSERT INTO handyman (
-      handy_id, handy_name, handy_user_name, phone_number, h_email, h_bio, h_field, h_photo, h_password, h_fee, h_citizenship_photo, h_expertise
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-  const values = [
-    handyId,
-    handy_name,
-    handy_user_name,
-    phone_number,
-    h_email,
-    h_bio,
-    h_field,
-    h_photo,
-    h_password,
-    h_fee,
-    h_citizenship_photo,
-    h_expertise,
-  ];
-
-  pool.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error registering handyman:", error);
-      if (!res.headersSent) {
-        return res
-          .status(500)
-          .json({ message: "Error registering handyman.", error });
-      }
-    } else {
-      if (!res.headersSent) {
-        return res
-          .status(201)
-          .json({ message: "Handyman registered successfully." });
-      }
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res
+        .status(500)
+        .json({ message: "Error registering handyman.", error: err });
     }
+
+    connection.query(
+      "SELECT h_email FROM handyman where h_email=?",
+      [h_email],
+      (err, result) => {
+        if (err) {
+          connection.release();
+          console.error("Error checking existing email:", err);
+          return res
+            .status(500)
+            .json({ message: "Error registering handyman.", error: err });
+        }
+
+        if (result && result.length > 0) {
+          connection.release();
+          return res
+            .status(400)
+            .json({ message: "Email has already been registered." });
+        }
+
+        bcrypt.hash(h_password, 8, (err, hashedPassword) => {
+          if (err) {
+            connection.release();
+            console.error("Error hashing password:", err);
+            return res
+              .status(500)
+              .json({ message: "Error registering handyman.", error: err });
+          }
+
+          const query = `
+          INSERT INTO handyman (handy_id, handy_name,handy_user_name,phone_number,
+h_email,h_bio,h_field,h_photo,h_password,h_fee,h_citizenship_photo,h_expertise) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+        `;
+          const values = [
+            handyId,
+            handy_name,
+            handy_user_name,
+            phone_number,
+            h_email,
+            h_bio,
+            h_field,
+            h_photo,
+            hashedPassword,
+            h_fee,
+            h_citizenship_photo,
+            h_expertise,
+          ];
+
+          connection.query(query, values, (err, rows) => {
+            connection.release();
+
+            if (err) {
+              console.error("Error inserting handyman into database:", err);
+              return res
+                .status(500)
+                .json({ message: "Error registering handyman.", error: err });
+            }
+
+            // User successfully registered
+            const token = createToken(handyId, h_email); // Assuming createToken function is defined elsewhere
+
+            res.cookie("jwt", token, {
+              httpOnly: true,
+              maxAge: maxAge * 1000, // Assuming maxAge is defined
+            });
+
+            res.status(201).json({ status: "success", handy_id: handyId });
+          });
+        });
+      }
+    );
   });
 };
 
@@ -107,46 +164,62 @@ exports.getHandymanInfo = (req, res) => {
 };
 
 exports.loginHandy = (req, res) => {
-  const { email, password: checkPassword } = req.body;
+  const { h_email, h_password } = req.body; // Corrected to use h_password directly
+  console.log(h_email, h_password);
   const pool = req.pool;
+
   pool.getConnection((err, connection) => {
-    if (err) throw err;
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res
+        .status(500)
+        .json({ status: "error", error: "Internal Server Error" });
+    }
+
     connection.query(
-      "SELECT handy_id,email,password FROM handyman WHERE email=?",
-      [email],
+      "SELECT handy_id, h_email, h_password FROM handyman WHERE h_email=?",
+      [h_email],
       async (err, result) => {
-        connection.release();
+        connection.release(); // Release connection back to the pool
+
         if (err) {
-          // Handle the error
-          console.log("Error retrieving handyman:", err);
+          console.error("Error retrieving handyman:", err);
           return res
             .status(500)
             .json({ status: "error", error: "Internal Server Error" });
         }
+
         if (result.length === 0) {
-          // If user not found, send appropriate response
           return res
             .status(404)
             .json({ status: "error", error: "Handyman not found" });
         }
+
         if (result.length === 1) {
-          const storedPassword = result[0].password;
-          const storedEmail = result[0].email;
+          const storedPassword = result[0].h_password;
+          console.log(storedPassword); //hashed
+          const storedEmail = result[0].h_email;
           const stored_handy_id = result[0].handy_id;
-          // console.log(handy_id);
+
           try {
             const passwordsMatch = await comparePassword(
-              checkPassword,
+              h_password,
               storedPassword
             );
+
             if (passwordsMatch) {
-              const token = createToken(stored_handy_id, email);
+              const token = createToken(stored_handy_id, storedEmail);
+
               res.cookie("jwt", token, {
-                // domain: "localhost",
                 httpOnly: true,
-                maxAge: maxAge * 1000,
+                maxAge: maxAge * 1000, // Assuming maxAge is defined
               });
-              res.json({ status: "success", handy_id: stored_handy_id });
+
+              return res.json({
+                status: "success",
+                handy_id: stored_handy_id,
+                jwt: token,
+              });
             } else {
               return res
                 .status(401)
