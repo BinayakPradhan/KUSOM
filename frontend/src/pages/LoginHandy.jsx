@@ -25,7 +25,7 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://127.0.0.1:9000/users/login`, {
+      const response = await fetch(`http://127.0.0.1:9000/handyman/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export default function Login() {
         // storeTokenInLS(token);
         setUser(initialState);
 
-        navigate("/user");
+        navigate("/handyman");
 
         axios.defaults.headers.common["Authorization"] = `Bearer ${data.jwt}`;
       } else {

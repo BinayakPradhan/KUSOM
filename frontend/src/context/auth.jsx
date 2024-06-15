@@ -10,7 +10,11 @@ export const AuthProvider = ({ children }) => {
     return localStorage.setItem("token", serverToken);
   };
 
-  let isLoggedIn = !!token;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!token);
+  }, [isLoggedIn, token]);
 
   // Tackling Logout
   const LogoutUser = () => {
@@ -19,26 +23,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   // JWT Authentication
-  const useAuthentication = async () => {
-    try {
-      const response = await fetch(`authentication link of user`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`user data`, data);
-        setUser(data);
-      }
-    } catch (error) {
-      console.error("Error fetching user data");
-    }
-  };
-  useEffect(function () {
-    useAuthentication();
-  }, []);
+  // const useAuthentication = async () => {
+  //   try {
+  //     const response = await fetch(`authentication link of user`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log(`user data`, data);
+  //       setUser(data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching user data");
+  //   }
+  // };
+  // useEffect(function () {
+  //   useAuthentication();
+  // }, []);
 
   return (
     <AuthContext.Provider

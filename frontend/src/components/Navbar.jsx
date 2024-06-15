@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { HiMenu } from "react-icons/hi"; // Import the menu icon from react-icons (example)
+import { HiMenu } from "react-icons/hi";
 import { useAuth } from "../context/auth";
 import logo from "../assets/svg/logo-no-background.svg";
 import Button from "./Button";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoggedIn } = useAuth(); // Assuming you have useAuth hook implemented
+  const { isLoggedIn, LogoutUser } = useAuth();
+
+  const handleLogout = () => {
+    LogoutUser(); // Assuming useAuth provides a logout function
+  };
 
   return (
     <header className="bg-slate-600">
@@ -32,7 +36,9 @@ const Navbar = () => {
           <ul className="flex gap-8 text-white items-center">
             {isLoggedIn ? (
               <li>
-                <NavLink to="/logout">Logout</NavLink>
+                <button onClick={handleLogout} className="text-white">
+                  Logout
+                </button>
               </li>
             ) : (
               <>
@@ -58,12 +64,12 @@ const Navbar = () => {
         <div className="md:hidden bg-white shadow-lg">
           <div className="py-1">
             {isLoggedIn ? (
-              <NavLink
-                to="/logout"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              <button
+                onClick={handleLogout}
+                className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >
                 Logout
-              </NavLink>
+              </button>
             ) : (
               <>
                 <NavLink

@@ -52,7 +52,8 @@ export default function HelperSignup() {
       if (response.ok) {
         const data = await response.json();
         console.log(`response from server`, data);
-        storeTokenInLS(data.token);
+
+        storeTokenInLS(data.jwt);
 
         setUser(initialState);
         alert("Signup Successful");
