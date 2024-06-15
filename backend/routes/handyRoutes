@@ -11,4 +11,5 @@ router.route("/:handyId").get(handyController.getHandymanInfo);
 router.get("/post/:handyId", handyController.getHandyFeed);
 router.put("/updateInterest/:handyId", handyController.updateInterestStatus);
 router.post("/postProduct", handyController.postProduct);
+// router.post("/getProducts", handyController.getProducts);
 module.exports = router;
