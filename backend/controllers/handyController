@@ -332,3 +332,77 @@ exports.updateInterestStatus = (req, res) => {
     );
   });
 };
+
+exports.postProduct = (req, res) => {
+  const pool = req.pool;
+  const { p_name, p_info, p_img, p_price, p_quality, p_quantity, s_email } =
+    req.body;
+
+  if (
+    !p_name ||
+    !p_info ||
+    !p_img ||
+    !p_price ||
+    !p_quality ||
+    !p_quantity ||
+    !s_email
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting connection from pool:", err);
+      return res.status(500).json({ message: "Error connecting to database." });
+    }
+
+    const findUserId = `SELECT handy_id FROM handyman where h_email=?`;
+
+    connection.query(findUserId, [s_email], (err, results) => {
+      if (err) {
+        connection.release();
+        console.error("Error checking existing email:", err);
+        return res
+          .status(500)
+          .json({ message: "Error checking email.", error: err });
+      }
+
+      if (results.length === 0) {
+        connection.release();
+        return res.status(404).json({ message: "Seller not found." });
+      }
+      const p_id = uuidv4();
+
+      const s_id = results[0].handy_id;
+      const insertProductQuery =
+        "INSERT INTO product (product_id,p_name, p_info, p_img, p_price, p_quality, p_quantity, seller_id) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
+      const productValues = [
+        p_id,
+        p_name,
+        p_info,
+        p_img,
+        p_price,
+        p_quality,
+        p_quantity,
+        s_id,
+      ];
+
+      connection.query(insertProductQuery, productValues, (err, result) => {
+        connection.release();
+        if (err) {
+          console.error("Error inserting product:", err);
+          return res
+            .status(500)
+            .json({ message: "Error adding product.", error: err });
+        }
+
+        return res.status(201).json({
+          message: "Product added successfully.",
+          productId: p_id,
+        });
+      });
+    });
+  });
+};
