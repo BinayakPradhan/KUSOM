@@ -203,11 +203,6 @@ app.post("/processMLData", async (req, res) => {
     }
   }
 });
-// Middleware to attach the database pool to each request
-app.use((req, res, next) => {
-  req.pool = pool; // Attach the database pool to request object
-  next();
-});
 
 // Assuming you have imported necessary modules and set up your app and database connection
 

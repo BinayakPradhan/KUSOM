@@ -7,11 +7,11 @@ const userController = require("../controllers/userController");
 
 router.post("/register", userController.registerUser); //eslai ni controller ma lagnu xa
 router.post("/login", userController.loginUser);
+router.get("/post/:userId", userController.getPost);
 router.get("/:userId", userController.getUserInfo);
 router.post("/posttask", userController.postTask);
 router.get("/post/:postId", userController.getUserFeed);
 router.post("/postProduct", userController.postProduct);
 router.get("/getInterestedData/:postId", userController.getInterestedData);
-router.get("/post/:userId", userController.getPost);
 
 module.exports = router;
