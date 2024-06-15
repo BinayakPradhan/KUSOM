@@ -1,4 +1,4 @@
-import { AiOutlineStar, AiFillStar, AiOutlineShopping } from "react-icons/ai";
+import { AiOutlineShopping } from "react-icons/ai";
 // import Product from "../pages/Product";
 import Star from "./Star";
 import { NavLink } from "react-router-dom";
