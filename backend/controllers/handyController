@@ -112,13 +112,13 @@ exports.loginHandy = (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) throw err;
     connection.query(
-      "SELECT handy_id,email,password FROM user WHERE email=?",
+      "SELECT handy_id,email,password FROM handyman WHERE email=?",
       [email],
       async (err, result) => {
         connection.release();
         if (err) {
           // Handle the error
-          console.log("Error retrieving user:", err);
+          console.log("Error retrieving handyman:", err);
           return res
             .status(500)
             .json({ status: "error", error: "Internal Server Error" });
@@ -127,7 +127,7 @@ exports.loginHandy = (req, res) => {
           // If user not found, send appropriate response
           return res
             .status(404)
-            .json({ status: "error", error: "User not found" });
+            .json({ status: "error", error: "Handyman not found" });
         }
         if (result.length === 1) {
           const storedPassword = result[0].password;
@@ -164,43 +164,48 @@ exports.loginHandy = (req, res) => {
   });
 };
 
-// exports.getHandyFeed = (req, res) => {
-//   const { handyId } = req.params;
+exports.getHandyFeed = (req, res) => {
+  const { handyId } = req.params;
+  console.log(`Fetching feed for handyman ID: ${handyId}`); // Debug log
 
-//   if (!handyId) {
-//     return res.status(400).json({ message: "handyId is required" });
-//   }
+  if (!handyId) {
+    return res.status(400).json({ message: "handyId is required" });
+  }
 
-//   pool.getConnection((err, connection) => {
-//     if (err) {
-//       console.error("Error getting database connection:", err);
-//       return res.status(500).json({ message: "Error connecting to database." });
-//     }
+  const pool = req.pool;
 
-//     const sql = `
-//       SELECT p.post, p.user_id, u.*
-//       FROM post p
-//       INNER JOIN user u ON p.user_id = u.user_id
-//       INNER JOIN interested i ON p.post_id = i.post_id
-//       INNER JOIN handyman h ON h.handy_id = i.handy_id
-//       WHERE i.handy_id = ?
-//     `;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection:", err);
+      return res.status(500).json({ message: "Error connecting to database." });
+    }
 
-//     connection.query(sql, [handyId], (err, rows) => {
-//       connection.release();
+    const sql = `
+      SELECT p.post, p.user_id, u.*,i.interested_status
+      FROM post p
+      INNER JOIN users u ON p.user_id = u.user_id
+      INNER JOIN interested i ON p.post_id = i.post_id
+      INNER JOIN handyman h ON h.handy_id = i.handy_id
+      WHERE i.handy_id = ?
+    `;
 
-//       if (err) {
-//         console.error("Error executing query:", err);
-//         return res
-//           .status(500)
-//           .json({ message: "Error querying database.", error: err });
-//       }
+    connection.query(sql, [handyId], (err, rows) => {
+      connection.release();
 
-//       res.status(200).json({
-//         status: "success",
-//         results: rows.length,
-//         data: { rows },
-//       });
-//     });
-//   });
-// };
+      if (err) {
+        console.error("Error executing query:", err);
+        return res
+          .status(500)
+          .json({ message: "Error querying database.", error: err });
+      }
+
+      console.log(`Retrieved ${rows.length} rows`); // Debug log
+
+      res.status(200).json({
+        status: "success",
+        results: rows.length,
+        data: { rows },
+      });
+    });
+  });
+};
