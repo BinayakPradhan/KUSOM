@@ -4,20 +4,20 @@ import "./HandyProfile.css";
 function HandyProfile() {
   // Sample data
   const profileData = {
-    name: "John Doe",
-    profileImageUrl: "",
+    name: "Subed Shah",
+    profileImageUrl: "src/assets/subed.png",
     phone: "123-456-7890",
     address: "123 Main St, Anytown, USA",
-    field: "Software Engineering",
+    field: "Master Carpenter",
     pastWorks: [
       {
         id: 1,
-        title: "Project A",
+        title: "Project Treehouse",
         description: "Lorem ipsum...",
       },
       {
         id: 2,
-        title: "Project B",
+        title: "House",
         description: "Lorem ipsum...",
       },
       // Add more projects as needed

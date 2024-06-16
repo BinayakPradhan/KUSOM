@@ -7,13 +7,12 @@ const ProfileCard = () => {
   return (
     <div className="ProfileCard">
       <div className="ProfileImages">
-        {/* <img src={Cover} alt="" />
-        <img src={Profile} alt="" /> */}
+        <img src="src/assets/subed.png" alt="" />
       </div>
 
       <div className="ProfileName">
-        <span>Zendaya MJ</span>
-        <span>Senior UI/UX Designer</span>
+        <span>Subed Shah</span>
+        <span>Carpenter</span>
       </div>
 
       <div className="followStatus">

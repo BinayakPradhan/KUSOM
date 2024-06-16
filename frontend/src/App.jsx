@@ -52,7 +52,7 @@
 
 // export default App;
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import HandyProfile from "./pages/HandyProfile";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
@@ -88,6 +88,7 @@ const App = () => {
           <Route path="/chooselogin" element={<ChooseLogin />} />
 
           <Route path="/logout" element={<Logout />} />
+          <Route path="/handyProfile" element={<HandyProfile />} />
           <Route path="/user" element={<User />} />
           <Route path="/handyman" element={<Handyman />} />
           <Route path="/user/addproduct" element={<UserProduct />} />

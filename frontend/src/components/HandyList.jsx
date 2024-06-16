@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { Card } from "@chakra-ui/react";
 const HandyList = ({ title, initialItems }) => {
   const [items, setItems] = useState(initialItems);
 
@@ -12,10 +12,7 @@ const HandyList = ({ title, initialItems }) => {
       <div className="font-bold text-xl mb-2">{title}</div>
       <ul className="list-disc list-inside">
         {items.map((item, index) => (
-          <li
-            key={index}
-            className="flex justify-between items-center"
-          >
+          <li key={index} className="flex justify-between items-center">
             <span>{item}</span>
             <button
               className="text-red-500 hover:text-red-700 ml-4"
