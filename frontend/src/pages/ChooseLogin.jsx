@@ -1,6 +1,6 @@
 import Handyman from "../assets/handyman.png";
 import NewUser from "../assets/new.png";
-
+import Business from "../assets/business.png";
 import { useNavigate } from "react-router-dom";
 
 const ChooseLogin = () => {
@@ -20,7 +20,11 @@ const ChooseLogin = () => {
               opacity: 0.2,
             }}
           ></div>
-          <img className="relative w-40 scale-150" src={NewUser} alt="User" />
+          <img
+            className="relative w-40 scale-150"
+            src="src/assets/PngItem_367727.png"
+            alt="User"
+          />
         </div>
         <div className="relative text-white px-6 pb-6">
           <span className="block opacity-75 mb-1">Login as</span>
@@ -43,7 +47,11 @@ const ChooseLogin = () => {
               opacity: 0.2,
             }}
           ></div>
-          <img className="relative w-40" src={Handyman} alt="Handyman" />
+          <img
+            className="relative h-60"
+            src="src/assets/PngItem_1596254.png"
+            alt="Handyman"
+          />
         </div>
         <div className="relative text-white px-6 pb-6">
           <span className="block opacity-75 mb-1">Login as</span>

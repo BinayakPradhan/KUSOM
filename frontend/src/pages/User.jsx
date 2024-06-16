@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiFolder } from "react-icons/fi";
 import { useState } from "react";
 import { IoEllipse } from "react-icons/io5";
-
+import { CiShop } from "react-icons/ci";
 import AddTask from "../components/AddTask";
 import AddProduct from "../components/AddProduct";
 
@@ -87,11 +87,11 @@ export default function User() {
   return (
     <div className="antialiased bg-primary w-full min-h-screen text-textColor relative py-4">
       <div className="mx-auto gap-2 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 my-10 px-2">
-        <div id="menu" className="bg-headingColor col-span-3 rounded-lg p-4">
-          <h1 className="font-bold text-lg lg:text-3xl bg-gradient-to-br from-headingColor via-white to-transparent bg-clip-text text-transparent">
+        <div id="menu" className="bg-yudhir col-span-3 rounded-lg p-4">
+          <h1 className="font-bold text-lg lg:text-3xl bg-gradient-to-br from-white via-sworn to-transparent bg-clip-text text-transparent">
             Dashboard<span className="text-indigo-400">.</span>
           </h1>
-          <p className="text-slate-400 text-sm mb-2">Welcome back,</p>
+          <p className="text-sworn text-sm mb-2">Welcome back,</p>
           <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row mb-5 items-center md:space-x-2 hover:bg-white/10 group transition duration-150 ease-linear rounded-lg group w-full py-3 px-2">
             <div>
               <img
@@ -101,13 +101,13 @@ export default function User() {
               />
             </div>
             <div>
-              <p className="font-medium text-white group-hover:text-indigo-400 leading-4">
-                User Name
+              <p className="font-medium text-sworn group-hover:text-indigo-400 leading-4">
+                Tom Pradhan
               </p>
-              <span className="text-xs text-slate-400"></span>
+              <span className="text-xs text-sworn"></span>
             </div>
           </div>
-          <hr className="my-2 border-slate-700" />
+          <hr className="my-2 border-sworn" />
           <div
             id="menu"
             className="flex flex-col space-y-2 my-5 cursor-pointer"
@@ -118,13 +118,13 @@ export default function User() {
             >
               <div className="relative flex flex-col space-y-2 md:flex-row md:space-y-0 space-x-2 items-center">
                 <div>
-                  <FiFolder className="text-indigo-400 w-6 h-6" />
+                  <FiFolder className="text-sworn w-6 h-6" />
                 </div>
                 <div>
-                  <p className="font-bold text-base lg:text-lg text-slate-200 leading-4 group-hover:text-indigo-400">
+                  <p className="font-bold text-base lg:text-lg text-sworn leading-4 group-hover:text-indigo-400">
                     Posts
                   </p>
-                  <p className="text-slate-400 text-sm hidden md:block">
+                  <p className="text-sworn text-sm hidden md:block">
                     Post History
                   </p>
                 </div>
@@ -140,13 +140,13 @@ export default function User() {
             >
               <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 space-x-2 items-center">
                 <div>
-                  <IoEllipse className="text-indigo-400 w-6 h-6" />
+                  <CiShop className="text-sworn w-8 h-8" />
                 </div>
                 <div>
-                  <p className="font-bold text-base lg:text-lg text-slate-200 leading-4 group-hover:text-indigo-400">
+                  <p className="font-bold text-base lg:text-lg text-sworn leading-4 group-hover:text-indigo-400">
                     Shop
                   </p>
-                  <p className="text-slate-400 text-sm hidden md:block">
+                  <p className="text-sworn text-sm hidden md:block">
                     See Market
                   </p>
                 </div>

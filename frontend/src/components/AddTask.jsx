@@ -6,7 +6,7 @@ export default function AddTask({ handleTask, task, handleInput }) {
     <div id="last-incomes">
       <h1 className="font-bold py-4 uppercase">Add Tasks</h1>
       <div id="stats" className="grid gap-4">
-        <div className="bg-black/60 to-white/5 rounded-lg">
+        <div className="bg-yudhir to-sworn rounded-lg">
           <div className="flex p-2 justify-around">
             <div className="text-3xl text-white p-4">Post</div>
             <div className="p-4 text-center flex justify-center">
@@ -20,7 +20,7 @@ export default function AddTask({ handleTask, task, handleInput }) {
             </div>
 
             <button
-              className="bg-indigo-500 px-8  rounded-lg inline-flex items-center"
+              className="bg-sworn px-8  rounded-lg inline-flex items-center"
               onClick={handleTask}
             >
               <IoIosAddCircleOutline className="w-6 h-6 text-white" />

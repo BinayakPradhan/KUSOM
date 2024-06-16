@@ -1,43 +1,47 @@
-import { useEffect, useState } from "react";
-
-// import GiShoppingCart from "react-icons/gi";
-import Star from "../components/Star";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useProductContext } from "../context/productContext";
 import PageNavigation from "../components/PageNavigation";
 import CartAmountToggle from "../components/CartAmountToggle";
+import { useProductContext } from "../context/productContext";
 
-const API = "http://127.0.0.1:9000/shop";
 const Product = () => {
+  const { products, getSingleProduct, isSingleLoading } = useProductContext();
   const [amount, setAmount] = useState(1);
-  const { getSingleProduct, isSingleLoading, singleProduct } =
-    useProductContext();
+  const [product, setProduct] = useState({});
   const { idd } = useParams();
-  const setDecrease = () => {
-    amount > 1 ? setAmount(amount - 1) : setAmount(1);
-  };
-  const setIncrease = () => {
-    setAmount(amount + 1);
-  };
-  const { id, name, img, price, Quality } = singleProduct;
-  console.log("singleProduct in Product", singleProduct);
-  useEffect(() => {
-    getSingleProduct(`${API}/${idd}`);
-  }, [idd]);
 
-  // console.log(id);
+  useEffect(() => {
+    if (!isSingleLoading) {
+      // Fetch the single product only if products are loaded and not loading
+      const product = products.find((product) => product.product_id === idd);
+      setProduct(product);
+      if (product) {
+        getSingleProduct(product); // Assuming getSingleProduct sets the single product in context
+      }
+    }
+  }, [products, getSingleProduct, idd, isSingleLoading]);
+
+  const setDecrease = () => {
+    setAmount((prevAmount) => (prevAmount > 1 ? prevAmount - 1 : 1));
+  };
+
+  const setIncrease = () => {
+    setAmount((prevAmount) => prevAmount + 1);
+  };
+
   if (isSingleLoading) {
     return <div>Loading...</div>;
   }
+
   return (
     <>
-      <PageNavigation title={name} />
+      <PageNavigation title={product.product_name} />
       <section className="flex flex-col justify-between lg:flex-row pt-5 px-4 gap-12 bg-white">
         <div className="flex flex-col gap-2 lg:w-3/4">
           {/* main image */}
           <img
-            src={img}
-            alt={name}
+            src={product.product_image}
+            alt={product.product_name}
             className="w-full h-[80%] aspect-square object-cover rounded-xl"
           />
           {/* Div for alternate images */}
@@ -45,12 +49,13 @@ const Product = () => {
         </div>
         <div className="flex flex-col gap-4 p-5 pt-0 lg:w-2/4">
           <div>
-            <Star stars={Quality} />
-            <h1 className="text-5xl font-bold uppercase">{name}</h1>
+            <h1 className="text-5xl font-bold uppercase">
+              {product.product_name}
+            </h1>
           </div>
 
           <h6 className="text-4xl font-semibold text-warning mt-3">
-            {`Rs. ` + price}
+            {`Rs. ${product.product_price}`}
           </h6>
           <hr className="max-w-full w-[100%] border-[0.1rem] border-solid border-textColor" />
           <div className="mt-2">
@@ -63,7 +68,6 @@ const Product = () => {
             </div>
 
             <button className="flex items-center gap-4 justify-center bg-warning py-2 w-full text-lightColor rounded-lg shadow mt-5 hover:bg-primary hover:text-textColor border-none">
-              {/* <GiShoppingCart className="text-[38px] " /> */}
               <span className="font-semibold py-3 px-2 rounded-xl h-full">
                 Add to Cart
               </span>

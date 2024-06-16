@@ -1,0 +1,152 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+
+/* Home section */
+.home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-image: url("../src/assets/garage.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #fff;
+  text-align: center;
+  position: relative;
+}
+
+.home-content {
+  max-width: 50%;
+  z-index: 1;
+  padding: 20px;
+}
+
+.home h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #e98e72;
+  position: relative;
+  top: 120px;
+}
+
+.home p {
+  font-size: 1.5rem;
+  color: #0f1b71;
+  position: relative;
+  top: 110px;
+}
+
+.home-buttons {
+  margin-top: 20px;
+  position: relative;
+  top: 110px;
+}
+
+.home-buttons button {
+  padding: 15px 30px;
+  margin-right: 20px;
+  font-size: 1.2rem;
+  background-color: #e98e72;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-buttons button:hover {
+  background-color: #e1502f;
+}
+
+/* About section */
+.about {
+  background-color: #fdf2e9;
+  color: #3e3e3e;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #091463;
+}
+
+.reasons {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.reasons li {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.reasons li img {
+  max-width: 50px;
+  margin-right: 20px;
+}
+
+.reasons li span {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.footer-container {
+  max-width: 1200px; /* Max width for footer content /
+  margin: 0 auto; / Center content horizontally /
+  padding: 0 20px; / Padding on sides */
+}
+
+.footer-links {
+  list-style-type: none; /* Remove default list styles /
+  margin: 0; / Remove default margin /
+  padding: 0; / Remove default padding /
+  display: flex; / Use flexbox for layout /
+  justify-content: center; / Center items horizontally /
+  align-items: center; / Align items vertically /
+  gap: 40px; / Space between items */
+}
+
+.footer-links li {
+  display: inline-block; /* Inline-block for list items */
+}
+
+.footer-links a {
+  color: #d2dae2; /* Light text color /
+  text-decoration: none; / Remove underline /
+  font-size: 16px; / Font size /
+  transition: color 0.3s ease; / Smooth color transition /
+  position: relative; / For pseudo-element */
+}
+
+.footer-links a::before {
+  content: ""; /* Empty content for the pseudo-element /
+  position: absolute; / Absolute positioning /
+  width: 0; / Initially hidden /
+  height: 2px; / Height of the underline /
+  bottom: -5px; / Position it below the text /
+  left: 50%; / Start from the center /
+  background-color: #1abc9c; / Underline color /
+  transition: width 0.3s ease, left 0.3s ease; / Smooth transition */
+}
+
+.footer-links a:hover::before {
+  width: 100%; /* Full width on hover /
+  left: 0; / Align with the text */
+}
+
+.footer-links a:hover {
+  color: #1abc9c; /* Hover color */
+}

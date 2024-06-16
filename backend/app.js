@@ -205,7 +205,10 @@ app.post("/processMLData", async (req, res) => {
 });
 
 // Assuming you have imported necessary modules and set up your app and database connection
-
+app.use("/shop", (req, res, next) => {
+  req.pool = pool;
+  next();
+});
 // Example of setting up a GET endpoint to fetch products with seller information
 app.get("/shop", (req, res) => {
   const pool = req.pool; // Assuming you have a database connection pool

@@ -15,18 +15,18 @@ const initialState = {
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  console.log(state);
+  // console.log(state);
 
-  const getProducts = async (url) => {
+  const getProducts = async (API) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const response = await fetch(url, {
+      const response = await fetch(API, {
         method: "GET",
       });
       const data = await response.json();
       const products = data.products;
       // console.log(data.products);
-      console.log(products);
+      // console.log(products);
       dispatch({ type: "MY_API_DATA", payload: products });
     } catch (error) {
       dispatch({ type: "API_ERROR" });
@@ -35,13 +35,13 @@ const AppProvider = ({ children }) => {
 
   // API call for individual product
 
-  const getSingleProduct = async (url) => {
+  const getSingleProduct = async (API) => {
     dispatch({ type: "SET_SINGLE_LOADING" });
     try {
-      const response = await fetch(url, { method: "GET" });
+      const response = await fetch(API, { method: "GET" });
       const singleProduct = await response.json();
       dispatch({ type: "SET_SINGLE_PRODUCT", payload: singleProduct[0] });
-      console.log("singleProduct", singleProduct);
+      // console.log("singleProduct", singleProduct);
     } catch (error) {
       dispatch({ type: "SET_SINGLE_ERROR" });
     }

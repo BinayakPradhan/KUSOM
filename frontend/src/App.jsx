@@ -96,7 +96,7 @@ const App = () => {
           <Route path="/user/history/detail" element={<HistoryDetail />} />
           <Route path="/user/history/details" element={<HistoryDetailss />} />
           <Route path="/user/shop" element={<Shop />} />
-          <Route path="/user/shop/product/:id" element={<Product />} />
+          <Route path="/user/shop/product/:idd" element={<Product />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

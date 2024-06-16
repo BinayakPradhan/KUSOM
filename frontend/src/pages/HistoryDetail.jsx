@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { TiTickOutline } from "react-icons/ti";
-
+import subed from "../assets/subed.png";
 function generateRandomImage() {
   // Example random image URL generator
   const randomImage = `https://randomuser.me/api/portraits/men/${Math.floor(
@@ -12,12 +12,12 @@ function generateRandomImage() {
 function generateRandomPost() {
   // Example random post generator
   const posts = [
-    "Looking for a chef to cater a small event.",
-    "Need a pastry chef for a wedding cake.",
-    "Seeking a sushi chef for a private dinner.",
-    "Hiring a chef to cook weekly meals.",
-    "Need a sous chef for a new restaurant opening.",
-    "Looking for a personal chef to cook at home.",
+    "Looking for a carpenter to build custom furniture.",
+    "Need a carpenter to install kitchen cabinets.",
+    "Seeking a carpenter for wooden flooring installation.",
+    "Hiring a carpenter to construct a deck for a backyard.",
+    "Need a carpenter to repair or replace door frames.",
+    "Looking for a carpenter to build shelves and storage units.",
   ];
   const randomPost = posts[Math.floor(Math.random() * posts.length)];
   return randomPost;
@@ -92,6 +92,30 @@ export default function HistoryDetail() {
           </tr>
         </thead>
         <tbody>
+          <tr className="border-b border-gray-700">
+            <td className="py-3 px-2 font-bold">
+              <div className="inline-flex space-x-3 items-center">
+                <span>
+                  <img
+                    className="rounded-full w-8 h-8"
+                    src={subed}
+                    alt="Profile"
+                  />
+                </span>
+                <span>Subed Shah</span>
+              </div>
+            </td>
+            <td className="py-3 px-2">Carpenter</td>
+            <td className="py-3 px-2">1234567890</td>
+            <td className="py-3 px-2">subed@gmail.com</td>
+            <td className="py-3 px-2">
+              <div className="inline-flex items-center ml-4">
+                <a href="#" title="Edit" className="hover:text-green-500">
+                  <TiTickOutline className="w-8 h-8" />
+                </a>
+              </div>
+            </td>
+          </tr>
           {rows.map((row, index) => (
             <tr key={index} className="border-b border-gray-700">
               <td className="py-3 px-2 font-bold">
