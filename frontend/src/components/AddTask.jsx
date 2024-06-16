@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-export default function AddTask({ handleTask, task, setTask, handleInput }) {
+export default function AddTask({ handleTask, task, handleInput }) {
   return (
     <div id="last-incomes">
       <h1 className="font-bold py-4 uppercase">Add Tasks</h1>

@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiFolder } from "react-icons/fi";
 import { useState } from "react";
 import { IoEllipse } from "react-icons/io5";
-import { TiTickOutline } from "react-icons/ti";
+
 import AddTask from "../components/AddTask";
 import AddProduct from "../components/AddProduct";
 
@@ -11,6 +11,7 @@ export default function User() {
   const location = useLocation();
   const { userId } = location.state;
   console.log(userId);
+  const [rows, setRows] = useState([]);
 
   async function handleHistory(e) {
     e.preventDefault();
@@ -18,11 +19,7 @@ export default function User() {
       const response = await fetch(
         `http://127.0.0.1:9000/users/post/${userId}`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(task),
+          method: "GET",
         }
       );
 
@@ -31,8 +28,13 @@ export default function User() {
       }
 
       const data = await response.json();
-      console.log(data);
-      navigate(`${location.pathname}/history`);
+      const rows = data.data.rows;
+      console.log(rows);
+      setRows(rows);
+
+      // Navigate to history and pass data as state
+      localStorage.setItem("user_id", userId);
+      navigate(`${location.pathname}/history`, { state: { rows, userId } });
     } catch (err) {
       console.error(err);
     }
@@ -43,7 +45,6 @@ export default function User() {
   }
 
   const [task, setTask] = useState({});
-  const [product, setProduct] = useState({});
 
   function handleInput(e) {
     const { name, value } = e.target;
@@ -72,6 +73,7 @@ export default function User() {
 
       const data = await response.json();
       console.log(data);
+      setTask({ post: "" });
     } catch (err) {
       console.error(err);
     }
@@ -127,7 +129,7 @@ export default function User() {
                   </p>
                 </div>
                 <div className="absolute -top-3 -right-3 md:top-0 md:right-0 px-2 py-1.5 rounded-full bg-indigo-800 text-xs font-mono font-bold">
-                  23
+                  {rows.length}
                 </div>
               </div>
             </div>
