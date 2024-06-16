@@ -2,8 +2,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#e98e72] text-white py-8">
-      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
+    <footer className="bg-[#e98e72] text-white py-8 px-4">
+      <div className="mx-auto flex flex-col md:flex-row items-center justify-between">
         <div className="md:w-2/5 w-full flex justify-center md:justify-start mb-4 md:mb-0">
           <img src="/src/assets/png/logo.png" alt="Logo" className="h-12" />
         </div>

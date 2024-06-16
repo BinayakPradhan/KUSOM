@@ -69,7 +69,7 @@ import Handyman from "./pages/Handyman";
 import History from "./pages/History";
 import Shop from "./pages/Shop";
 import Product from "./pages/Product";
-
+import Footer from "./components/Footer";
 import UserProduct from "./pages/UserProduct";
 import HistoryDetail from "./pages/HistoryDetail";
 
@@ -99,6 +99,7 @@ const App = () => {
           <Route path="/user/shop/product/:idd" element={<Product />} />
           <Route path="*" element={<Error />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );
